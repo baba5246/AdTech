@@ -1,0 +1,80 @@
+!SESSION 2014-04-21 15:08:58.292 -----------------------------------------------
+eclipse.buildId=4.3.2.M20140221-1700
+java.version=1.7.0_51
+java.vendor=Oracle Corporation
+BootLoader constants: OS=macosx, ARCH=x86_64, WS=cocoa, NL=ja_JP
+Framework arguments:  -product org.eclipse.epp.package.standard.product -keyring /Users/a13553/.eclipse_keyring -showlocation
+Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -product org.eclipse.epp.package.standard.product -keyring /Users/a13553/.eclipse_keyring -showlocation
+
+!ENTRY org.eclipse.core.net 1 0 2014-04-21 15:09:15.719
+!MESSAGE System property http.nonProxyHosts has been set to local|*.local|169.254/16|*.169.254/16 by an external source. This value will be overwritten using the values from the preferences
+
+!ENTRY org.eclipse.e4.ui.css.core 4 0 2014-04-21 15:55:08.400
+!MESSAGE CSS property 'selected-tab-fill' has been deprecated: renamed as selected-tab-fill
+!SESSION 2014-04-21 15:56:23.749 -----------------------------------------------
+eclipse.buildId=4.3.2.M20140221-1700
+java.version=1.7.0_51
+java.vendor=Oracle Corporation
+BootLoader constants: OS=macosx, ARCH=x86_64, WS=cocoa, NL=ja_JP
+Framework arguments:  -product org.eclipse.epp.package.standard.product -keyring /Users/a13553/.eclipse_keyring -showlocation
+Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -product org.eclipse.epp.package.standard.product -keyring /Users/a13553/.eclipse_keyring -showlocation
+
+!ENTRY org.eclipse.core.net 1 0 2014-04-21 15:56:29.133
+!MESSAGE System property http.nonProxyHosts has been set to local|*.local|169.254/16|*.169.254/16 by an external source. This value will be overwritten using the values from the preferences
+
+!ENTRY org.eclipse.e4.ui.css.core 4 0 2014-04-21 15:56:29.412
+!MESSAGE CSS property 'selected-tab-fill' has been deprecated: renamed as selected-tab-fill
+!SESSION 2014-04-21 15:57:09.011 -----------------------------------------------
+eclipse.buildId=4.3.2.M20140221-1700
+java.version=1.7.0_51
+java.vendor=Oracle Corporation
+BootLoader constants: OS=macosx, ARCH=x86_64, WS=cocoa, NL=ja_JP
+Framework arguments:  -product org.eclipse.epp.package.standard.product -keyring /Users/a13553/.eclipse_keyring -showlocation
+Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -product org.eclipse.epp.package.standard.product -keyring /Users/a13553/.eclipse_keyring -showlocation
+
+!ENTRY org.eclipse.core.net 1 0 2014-04-21 15:57:13.938
+!MESSAGE System property http.nonProxyHosts has been set to local|*.local|169.254/16|*.169.254/16 by an external source. This value will be overwritten using the values from the preferences
+
+!ENTRY org.eclipse.e4.ui.css.core 4 0 2014-04-21 15:57:25.626
+!MESSAGE CSS property 'selected-tab-fill' has been deprecated: renamed as selected-tab-fill
+!SESSION 2014-04-21 15:57:48.284 -----------------------------------------------
+eclipse.buildId=4.3.2.M20140221-1700
+java.version=1.7.0_51
+java.vendor=Oracle Corporation
+BootLoader constants: OS=macosx, ARCH=x86_64, WS=cocoa, NL=ja_JP
+Framework arguments:  -product org.eclipse.epp.package.standard.product -keyring /Users/a13553/.eclipse_keyring -showlocation
+Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -product org.eclipse.epp.package.standard.product -keyring /Users/a13553/.eclipse_keyring -showlocation
+
+!ENTRY org.eclipse.core.net 1 0 2014-04-21 15:57:54.067
+!MESSAGE System property http.nonProxyHosts has been set to local|*.local|169.254/16|*.169.254/16 by an external source. This value will be overwritten using the values from the preferences
+
+!ENTRY org.eclipse.e4.ui.css.core 4 0 2014-04-21 15:57:54.347
+!MESSAGE CSS property 'selected-tab-fill' has been deprecated: renamed as selected-tab-fill
+!SESSION 2014-04-21 15:59:36.974 -----------------------------------------------
+eclipse.buildId=4.3.2.M20140221-1700
+java.version=1.7.0_51
+java.vendor=Oracle Corporation
+BootLoader constants: OS=macosx, ARCH=x86_64, WS=cocoa, NL=ja_JP
+Framework arguments:  -product org.eclipse.epp.package.standard.product -keyring /Users/a13553/.eclipse_keyring -showlocation
+Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -product org.eclipse.epp.package.standard.product -keyring /Users/a13553/.eclipse_keyring -showlocation
+
+!ENTRY org.eclipse.core.net 1 0 2014-04-21 15:59:41.629
+!MESSAGE System property http.nonProxyHosts has been set to local|*.local|169.254/16|*.169.254/16 by an external source. This value will be overwritten using the values from the preferences
+
+!ENTRY org.eclipse.jdt.core 4 0 2014-04-21 18:59:21.370
+!MESSAGE Invalid ZIP archive: libraries/commons-beanutils-1.9.1.jar [in Kategon]
+
+!ENTRY org.eclipse.jdt.core 4 0 2014-04-21 18:59:21.371
+!MESSAGE Invalid ZIP archive: libraries/commons-collections4-4.0.jar [in Kategon]
+
+!ENTRY org.eclipse.jdt.core 4 0 2014-04-21 18:59:21.371
+!MESSAGE Invalid ZIP archive: libraries/commons-lang3-3.3.2.jar [in Kategon]
+
+!ENTRY org.eclipse.jdt.core 4 0 2014-04-21 18:59:21.371
+!MESSAGE Invalid ZIP archive: libraries/commons-logging-1.1.3.jar [in Kategon]
+
+!ENTRY org.eclipse.jdt.launching 4 150 2014-04-21 18:59:40.676
+!MESSAGE The archive: /Kategon/libraries/commons-beanutils-1.9.1.jar which is referenced by the classpath, does not exist.
+
+!ENTRY org.eclipse.jdt.launching 4 150 2014-04-21 19:00:09.306
+!MESSAGE The archive: /Kategon/libraries/commons-beanutils-1.9.1.jar which is referenced by the classpath, does not exist.
