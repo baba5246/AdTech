@@ -63,9 +63,10 @@ public class Reader {
      * @param filepath ファイルパス
      * @return HashMap
      */
-    public Map<String, Object> readJSON(String filepath) throws IOException {
+    @SuppressWarnings("unchecked")
+	public Map<String, Map<String, Object>> readJSON(String filepath) throws IOException {
     	
-    	Map<String, Object> result = new HashMap<String, Object>();
+    	Map<String, Map<String, Object>> result = new HashMap<String, Map<String, Object>>();
 
 		// ファイルを読み込む
 		FileReader fr = new FileReader(filepath);
@@ -87,7 +88,7 @@ public class Reader {
     	JSONObject jsonData = JSONObject.fromObject(data);
     	result = jsonData;
     	
-    	return result;    	
+    	return result;
     }
 
 }

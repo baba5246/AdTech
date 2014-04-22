@@ -1,5 +1,7 @@
 package preprocessing;
 
-public class Tango {
 
+
+public class Mecab {
+	
 }

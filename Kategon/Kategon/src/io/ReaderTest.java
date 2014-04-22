@@ -55,7 +55,7 @@ public class ReaderTest {
 	public void readJSONはconst_jsonから330個のアプリ情報を取得できる() {
 		
 		Reader reader = new Reader();
-		Map<String, Object> jsonData = null;
+		Map<String, Map<String, Object>> jsonData = null;
 		try {
 			jsonData =  reader.readJSON("consts/const_json.json");
 		} catch (IOException e) {
@@ -68,14 +68,13 @@ public class ReaderTest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void readJSONはconst_json内の1つのアプリ情報から5つのkeyを取得できる() {
 
 		String[] matcher = { "category", "title", "company", "description",
 				"images" };
 
 		Reader reader = new Reader();
-		Map<String, Object> jsonData = null;
+		Map<String, Map<String, Object>> jsonData = null;
 		try {
 			jsonData = reader.readJSON("consts/const_json.json");
 		} catch (IOException e) {
@@ -85,7 +84,7 @@ public class ReaderTest {
 		String[] actual = null;
 		if (jsonData != null) {
 			String firstKey = jsonData.keySet().iterator().next();
-			Map<String, Object> app = (Map<String, Object>) jsonData.get(firstKey);
+			Map<String, Object> app = jsonData.get(firstKey);
 			actual = app.keySet().toArray(new String[app.size()]);
 		}
 		assertThat(actual, is(matcher));
