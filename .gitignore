@@ -2,7 +2,7 @@
 
 *.pydevproject
 .metadata
-Kategon/.metadata
+*/.metadata
 .gradle
 bin/
 tmp/
