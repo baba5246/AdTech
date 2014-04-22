@@ -61,7 +61,7 @@ public class Reader {
     /**
      * JSONファイルを読み込むメソッド
      * @param filepath ファイルパス
-     * @return HashMap
+     * @return HashMapのリスト
      */
     public Map<String, Object> readJSON(String filepath) throws IOException {
     	

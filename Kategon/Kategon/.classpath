@@ -3,12 +3,12 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry exported="true" kind="lib" path="/Users/a13553/Desktop/Stadon/Kategon/libraries/json-lib-2.4-jdk15-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="/Users/a13553/Desktop/Stadon/Kategon/libraries/json-lib-2.4-jdk15.jar"/>
 	<classpathentry kind="lib" path="libraries/commons-beanutils-1.8.0.jar"/>
 	<classpathentry kind="lib" path="libraries/commons-collections-3.2.1.jar"/>
 	<classpathentry kind="lib" path="libraries/commons-lang-2.5.jar"/>
 	<classpathentry kind="lib" path="libraries/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="/Users/a13553/Desktop/Stadon/Kategon/libraries/ezmorph-1.0.6.jar"/>
+	<classpathentry kind="lib" path="libraries/ezmorph-1.0.6.jar"/>
+	<classpathentry kind="lib" path="libraries/json-lib-2.4-jdk15-sources.jar"/>
+	<classpathentry kind="lib" path="libraries/json-lib-2.4-jdk15.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

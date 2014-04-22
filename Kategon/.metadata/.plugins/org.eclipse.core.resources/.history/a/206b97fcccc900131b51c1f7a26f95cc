@@ -88,6 +88,7 @@ public class ReaderTest {
 			Map<String, Object> app = (Map<String, Object>) jsonData.get(firstKey);
 			actual = app.keySet().toArray(new String[app.size()]);
 		}
+
 		assertThat(actual, is(matcher));
 	}
 
