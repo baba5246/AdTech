@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><testrun name="ReaderTest" project="Kategon" tests="4" started="4" failures="0" errors="0" ignored="0">
-  <testsuite name="io.ReaderTest" time="0.324">
-    <testcase name="readCSVはconst_gpから15個のカテゴリを取得できる" classname="io.ReaderTest" time="0.001"/>
-    <testcase name="readCSVは読み込みエラーでIOExceptionを投げる" classname="io.ReaderTest" time="0.0"/>
-    <testcase name="readCSVはconst_gpから15個のファイルパスを取得できる" classname="io.ReaderTest" time="0.001"/>
-    <testcase name="readJSONはconst_jsonから330個のアプリ情報を取得できる" classname="io.ReaderTest" time="0.322"/>
-  </testsuite>
-</testrun>
