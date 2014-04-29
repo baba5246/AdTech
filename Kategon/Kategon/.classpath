@@ -10,5 +10,8 @@
 	<classpathentry kind="lib" path="libraries/ezmorph-1.0.6.jar"/>
 	<classpathentry kind="lib" path="libraries/json-lib-2.4-jdk15-sources.jar"/>
 	<classpathentry kind="lib" path="libraries/json-lib-2.4-jdk15.jar"/>
+	<classpathentry kind="lib" path="/Users/BBPro/Desktop/AdTech/Kategon/Kategon/mecab/cmecab-2.0.1.jar"/>
+	<classpathentry kind="lib" path="/Users/BBPro/Desktop/AdTech/Kategon/Kategon/mecab/lib/bridj-0.6.1.jar"/>
+	<classpathentry kind="lib" path="/Users/BBPro/Desktop/AdTech/Kategon/Kategon/mecab/lib/groovy-all-1.8.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
