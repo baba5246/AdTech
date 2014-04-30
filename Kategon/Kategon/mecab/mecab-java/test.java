@@ -1,15 +1,13 @@
-package preprocessing;
-
 import org.chasen.mecab.MeCab;
 import org.chasen.mecab.Tagger;
 import org.chasen.mecab.Model;
 import org.chasen.mecab.Lattice;
 import org.chasen.mecab.Node;
 
-public class Mecab {
+public class test {
   static {
     try {
-    	System.loadLibrary("MeCab");
+       System.loadLibrary("MeCab");
     } catch (UnsatisfiedLinkError e) {
        System.err.println("Cannot load the example native code.\nMake sure your LD_LIBRARY_PATH contains \'.\'\n" + e);
        System.exit(1);
