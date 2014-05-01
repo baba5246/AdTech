@@ -1,55 +1,65 @@
 package preprocessing;
 
-import org.chasen.mecab.MeCab;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.chasen.mecab.Tagger;
-import org.chasen.mecab.Model;
-import org.chasen.mecab.Lattice;
 import org.chasen.mecab.Node;
 
+/**
+ * Mecabを扱うクラス
+ * @author baba
+ */
 public class Mecab {
-  static {
-    try {
-    	System.loadLibrary("MeCab");
-    } catch (UnsatisfiedLinkError e) {
-       System.err.println("Cannot load the example native code.\nMake sure your LD_LIBRARY_PATH contains \'.\'\n" + e);
-       System.exit(1);
-    }
-  }
-
-  public static void main(String[] argv) {
-     System.out.println(MeCab.VERSION);
-     Tagger tagger = new Tagger();
-     String str = "太郎は二郎にこの本を渡した。";
-     System.out.println(tagger.parse(str));
-     Node node = tagger.parseToNode(str);
-     for (;node != null; node = node.getNext()) {
-	System.out.println(node.getSurface() + "\t" + node.getFeature());
-     }
-     System.out.println ("EOS\n");
-
-     Model model = new Model();
-     Tagger tagger2 = model.createTagger();
-     System.out.println (tagger2.parse(str));
-
-     Lattice lattice = model.createLattice();
-     System.out.println(str);
-     lattice.set_sentence(str);
-     if (tagger2.parse(lattice)) {
-       System.out.println(lattice.toString());
-       for (node = lattice.bos_node(); node != null; node = node.getNext()) {
-	  System.out.println(node.getSurface() + "\t" + node.getFeature());
-       }
-       System.out.println("EOS\n");
-     }
-
-     lattice.add_request_type(MeCab.MECAB_NBEST);
-     lattice.set_sentence(str);
-     tagger2.parse(lattice);
-     for (int i = 0; i < 10; ++i) {
-       if (lattice.next()) {
-         System.out.println("nbest:" + i + "\n" +
-                            lattice.toString());
-       }
-     }
-  }
+	
+	private static String[] parts = {"名詞", "動詞", "形容詞", "副詞"}; 
+	
+	// 静的初期化子でMeCabライブラリの準備
+	static {
+		try {
+			System.loadLibrary("MeCab");
+		} catch (UnsatisfiedLinkError e) {
+			System.err.println("Cannot load the example native code.\nMake sure your DLYD_LIBRARY_PATH contains \'.\'\n" + e);
+			System.exit(1);
+		}
+	}
+	
+	/**
+	 * 文章から単語リストを抽出する
+	 * @param doc 文章を表すString
+	 * @return 単語のリスト
+	 */
+	public List<String> extractWordsFromDoc(String doc) {
+		
+		Tagger tagger = new Tagger();
+		Node node = tagger.parseToNode(doc);
+		
+		List<String> words = new ArrayList<String>();
+		for (; node != null; node = node.getNext()) {
+			String fstr = node.getFeature();
+			String[] features = fstr.split(",");
+			for (String part : parts) {
+				if (features[0].equals(part) == true) {
+					words.add(features[6]);
+					System.out.println(features[0] + ": " + features[6]);
+				}
+			}
+		}
+		return words;
+	}
+	
+	/**
+	 * 文章リストから、各文章ごとに単語リストを抽出する
+	 * @param docs 文章を表すStringのリスト
+	 * @return 各文章の単語のリスト
+	 */
+	public List<List<String>> extractWordsFromDocs(List<String> docs) {
+		
+		List<List<String>> wordsOfDocs = new ArrayList<List<String>>();
+		for (String doc : docs) {
+			List<String> words = extractWordsFromDoc(doc);
+			wordsOfDocs.add(words);
+		}
+		return wordsOfDocs;
+	}
 }

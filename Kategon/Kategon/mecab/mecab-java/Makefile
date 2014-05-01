@@ -7,7 +7,8 @@ JAVAC=javac -J-Dfile.encoding=UTF-8
 JAVA=java -Dfile.encoding=UTF-8
 JAR=jar -J-Dfile.encoding=UTF-8
 CXX=g++
-INCLUDE= /Library/Java/JavaVirtualMachines/jdk1.7.0_55.jdk/Contents/Home/include
+INCLUDE= /System/Library/Frameworks/JavaVM.framework/Versions/A/Headers
+#/Library/Java/JavaVirtualMachines/jdk1.7.0_55.jdk/Contents/Home/include
 #$(JAVA_BASE)/Headers
 
 PACKAGE=org/chasen/mecab
