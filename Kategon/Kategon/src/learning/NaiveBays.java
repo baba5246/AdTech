@@ -1,5 +1,6 @@
 package learning;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -11,8 +12,13 @@ import java.util.Map;
  * @author a13553
  *
  */
-public class NaiveBays {
+public class NaiveBays implements Serializable {
 
+	/**
+	 * SerializableのID
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private List<String> categories = new ArrayList<String>();
 	private List<String> vocabularies = new ArrayList<String>();
 	private Map<String, Map<String, Integer>> wordcount = new HashMap<String, Map<String, Integer>>();
@@ -61,7 +67,7 @@ public class NaiveBays {
 	 */
 	public String classify(String[] doc) {
 		String best = "";
-		double max = Double.MIN_VALUE;
+		double max = -Double.MAX_VALUE;
 		for (String cate : catecount.keySet()) {
 			double p = score(doc, cate);
 			if (p > max) {
@@ -79,7 +85,8 @@ public class NaiveBays {
 	 * @return 確率値
 	 */
 	public double wordProb(String word, String cate) {
-		return (double)(wordcount.get(cate).get(word) + 1) / denominator.get(cate);
+		double wcount = (wordcount.get(cate).get(word) == null) ? 0 : (double)wordcount.get(cate).get(word);
+		return (wcount + 1) / denominator.get(cate);
 	}
 
 	/**

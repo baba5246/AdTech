@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -16,7 +16,7 @@ public class ReaderTest {
 	public void readCSVはconst_gpから15個のカテゴリを取得できる() {
 		
 		Reader reader = new Reader();
-		ArrayList<String[]> categories = null;
+		List<String[]> categories = null;
 		try {
 			categories = reader.readCSV("consts/const_gp.csv");
 		} catch (IOException e) {
@@ -32,7 +32,7 @@ public class ReaderTest {
 	public void readCSVはconst_gpから15個のファイルパスを取得できる() {
 		
 		Reader reader = new Reader();
-		ArrayList<String[]> categories = null;
+		List<String[]> categories = null;
 		try {
 			categories = reader.readCSV("consts/const_gp.csv");
 		} catch (IOException e) {

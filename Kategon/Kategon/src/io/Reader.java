@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.io.IOException;
@@ -15,20 +16,16 @@ import net.sf.json.JSONObject;
  * @author a13553
  */
 public class Reader {
-
-	public Reader() {
-		
-	}
 	
 	/**
 	 * CSVファイルを読み込むメソッド
 	 * @param filepath ファイルパス
 	 * @return String配列のリスト
 	 */
-	public ArrayList<String[]> readCSV(String filepath) throws IOException {
+	public List<String[]> readCSV(String filepath) throws IOException {
 		
 		// 結果インスタンス作成
-		ArrayList<String[]> result = new ArrayList<String[]>();
+		List<String[]> result = new ArrayList<String[]>();
 		// ファイルを読み込む
 		FileReader fr = new FileReader(filepath);
 		BufferedReader br = new BufferedReader(fr);
@@ -48,7 +45,13 @@ public class Reader {
 			}
 			// 終了処理
 			br.close();
-
+			
+			if (result.size() < 2) {
+				throw new CsvBadFormatException("CSVの内容が正しくありません。");
+			} else if (result.get(0).length != result.get(1).length) {
+				throw new CsvBadFormatException("カテゴリの数とJSONパスの数が等しくありません。");
+			}
+			
 		} catch (IOException e) {
 			// 例外発生時処理
 			throw e;

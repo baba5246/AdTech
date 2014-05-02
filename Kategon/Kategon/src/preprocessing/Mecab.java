@@ -29,22 +29,24 @@ public class Mecab {
 	 * @param doc 文章を表すString
 	 * @return 単語のリスト
 	 */
-	public List<String> extractWordsFromDoc(String doc) {
+	public String[] extractWordsFromDoc(String doc) {
 		
 		Tagger tagger = new Tagger();
 		Node node = tagger.parseToNode(doc);
 		
-		List<String> words = new ArrayList<String>();
+		List<String> wordList = new ArrayList<String>();
 		for (; node != null; node = node.getNext()) {
 			String fstr = node.getFeature();
 			String[] features = fstr.split(",");
 			for (String part : parts) {
 				if (features[0].equals(part) == true) {
-					words.add(features[6]);
-					System.out.println(features[0] + ": " + features[6]);
+					if (features[6].equals("*") == true) continue;
+					wordList.add(features[6]);
 				}
 			}
 		}
+		String[] words = new String[wordList.size()];
+		wordList.toArray(words);
 		return words;
 	}
 	
@@ -53,11 +55,11 @@ public class Mecab {
 	 * @param docs 文章を表すStringのリスト
 	 * @return 各文章の単語のリスト
 	 */
-	public List<List<String>> extractWordsFromDocs(List<String> docs) {
+	public List<String[]> extractWordsFromDocs(List<String> docs) {
 		
-		List<List<String>> wordsOfDocs = new ArrayList<List<String>>();
+		List<String[]> wordsOfDocs = new ArrayList<String[]>();
 		for (String doc : docs) {
-			List<String> words = extractWordsFromDoc(doc);
+			String[] words = extractWordsFromDoc(doc);
 			wordsOfDocs.add(words);
 		}
 		return wordsOfDocs;

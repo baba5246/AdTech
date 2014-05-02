@@ -9,22 +9,35 @@ import org.junit.Test;
 
 public class NaiveBaysTest {
 
-	@Test
-	public void trainは分類器を学習する() {
-		
-		List<String[]> data = new ArrayList<String[]>();
+	private static List<String[]> data = new ArrayList<String[]>();
+	
+	static {
 		data.add(new String[]{"yes", "Chinese", "Beijing", "Hongkong"});
 		data.add(new String[]{"yes", "Shanghai", "Nanjing", "Hongkong"});
 		data.add(new String[]{"yes", "Xuzhou", "Beijing", "Luoyang"});
 		data.add(new String[]{"no", "Japan", "Tokyo", "Fukuoka"});
 		data.add(new String[]{"no", "Tokyo", "Shibuya", "Ikejiri"});
-		
-		NaiveBays nb = new NaiveBays();
-		nb.train(data);
-		System.out.println(nb);
-		
-		fail("とりあえず失敗");
-		
 	}
 
+	@Test
+	public void trainは分類器を学習してChinese_Hongkong_Japanをyesと判断する() {
+		// 学習
+		NaiveBays nb = new NaiveBays();
+		nb.train(data);
+		// テスト1
+		String[] test = {"Chinese", "Hongkong", "Japan"};
+		String actual = nb.classify(test);
+		assertEquals(actual, "yes");
+	}
+
+	@Test
+	public void trainは分類器を学習してTokyo_Hongkong_Japanをnoと判断する() {
+		// 学習
+		NaiveBays nb = new NaiveBays();
+		nb.train(data);
+		// テスト2
+		String[] test = new String[]{"Tokyo", "Hongkong", "Japan"};
+		String actual = nb.classify(test);
+		assertEquals(actual, "no");
+	}
 }
