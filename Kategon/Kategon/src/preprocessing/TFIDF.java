@@ -8,19 +8,19 @@ import java.util.Map;
 public class TFIDF {
 
 	private double threshold = 0;
-	private double thresholdMin = 0;
-	private double thresholdMax = 0;
-	private double thresholdDelta = 0;
+//	private double thresholdMin = 0;
+//	private double thresholdMax = 0;
+//	private double thresholdDelta = 0;
 	
 	public TFIDF(double threshold) {
 		this.threshold = threshold;
 	}
 	
-	public TFIDF(double thresholdMin, double thresholdMax, double thresholdDelta) {
-		this.thresholdMin = thresholdMin;
-		this.thresholdMax = thresholdMax;
-		this.thresholdDelta = thresholdDelta;
-	}
+//	public TFIDF(double thresholdMin, double thresholdMax, double thresholdDelta) {
+//		this.thresholdMin = thresholdMin;
+//		this.thresholdMax = thresholdMax;
+//		this.thresholdDelta = thresholdDelta;
+//	}
 	
 	/**
 	 * TF-IDFの計算
