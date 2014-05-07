@@ -17,6 +17,8 @@ import net.sf.json.JSONObject;
  */
 public class Reader {
 	
+	private static final int DEFINED_ROWS = 2;
+	
 	/**
 	 * CSVファイルを読み込むメソッド
 	 * @param filepath ファイルパス
@@ -46,7 +48,7 @@ public class Reader {
 			// 終了処理
 			br.close();
 			// エラーチェック
-			if (result.size() < 2) {
+			if (result.size() < DEFINED_ROWS) {
 				throw new CsvBadFormatException("CSVの内容が正しくありません。");
 			} else if (result.get(0).length != result.get(1).length) {
 				throw new CsvBadFormatException("カテゴリの数とJSONパスの数が等しくありません。");

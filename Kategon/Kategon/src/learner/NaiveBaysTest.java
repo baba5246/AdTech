@@ -1,4 +1,4 @@
-package learning;
+package learner;
 
 import static org.junit.Assert.*;
 
@@ -41,6 +41,6 @@ public class NaiveBaysTest {
 		assertEquals(actual, "no");
 	}
 	
-	// TODO: wordProb
-	// TODO: score
+	// TODO: wordProbのテスト
+	// TODO: scoreのテスト
 }

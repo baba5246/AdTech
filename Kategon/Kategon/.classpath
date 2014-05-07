@@ -10,6 +10,6 @@
 	<classpathentry kind="lib" path="libraries/ezmorph-1.0.6.jar"/>
 	<classpathentry kind="lib" path="libraries/json-lib-2.4-jdk15-sources.jar"/>
 	<classpathentry kind="lib" path="libraries/json-lib-2.4-jdk15.jar"/>
-	<classpathentry kind="lib" path="/usr/local/bin/mecab-java/MeCab.jar"/>
+	<classpathentry kind="lib" path="libraries/MeCab.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

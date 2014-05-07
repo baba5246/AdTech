@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class EvaluationTest {
+public class NBTrainTest {
 
 	// テスト書く
 	@Test

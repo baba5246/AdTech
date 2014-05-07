@@ -1,4 +1,4 @@
-package learning;
+package learner;
 
 import java.io.Serializable;
 import java.util.ArrayList;
