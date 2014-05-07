@@ -27,6 +27,5 @@ public class Main {
 		Evaluation eval = new Evaluation();
 		eval.test(csvFilePath, serFilePath);
 		
-		
 	}
 }

@@ -11,5 +11,7 @@ public class TFIDFTest {
 	public void test() {
 		fail("Not yet implemented");
 	}
+	
+	// TODO: tf-idfが正しく計算できるか
 
 }

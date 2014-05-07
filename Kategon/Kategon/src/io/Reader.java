@@ -45,15 +45,13 @@ public class Reader {
 			}
 			// 終了処理
 			br.close();
-			
+			// エラーチェック
 			if (result.size() < 2) {
 				throw new CsvBadFormatException("CSVの内容が正しくありません。");
 			} else if (result.get(0).length != result.get(1).length) {
 				throw new CsvBadFormatException("カテゴリの数とJSONパスの数が等しくありません。");
 			}
-			
 		} catch (IOException e) {
-			// 例外発生時処理
 			throw e;
 		}
 

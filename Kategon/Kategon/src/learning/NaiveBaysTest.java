@@ -40,4 +40,7 @@ public class NaiveBaysTest {
 		String actual = nb.classify(test);
 		assertEquals(actual, "no");
 	}
+	
+	// TODO: wordProb
+	// TODO: score
 }

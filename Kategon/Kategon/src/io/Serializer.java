@@ -8,7 +8,7 @@ import java.io.ObjectOutputStream;
 
 public class Serializer {
 	
-	private static final String path = "save/"; 
+	private static final String dirpath = "save/"; 
 	private static final String ext = ".ser"; 
 	
 	/**
@@ -22,10 +22,8 @@ public class Serializer {
 		// ファイル名チェック
 		if (filename.contains(".") == true) throw new BadFileNameException("ファイル名に\".\"は使用できません。");
 		
-		// オブジェクトを書込むファイルパス
-		String filepath = path + filename + ext;
-
-		ObjectOutputStream oos = null;
+		String filepath = dirpath + filename + ext; // オブジェクトを書込むファイルパス
+		ObjectOutputStream oos = null; // 初期化
 		
 		try {
 			// オブジェクトをファイルへ書き込み
@@ -54,11 +52,9 @@ public class Serializer {
 		// ファイル名チェック
 		if (filename.contains(".") == true) throw new BadFileNameException("ファイル名に\".\"は使用できません。");
 		
-		// オブジェクトを書込むファイルパス
-		String filepath = path + filename + ext;
-
-		ObjectInputStream ois = null;
-		Object readObj = null;
+		String filepath = dirpath + filename + ext; // オブジェクトを書込むファイルパス
+		ObjectInputStream ois = null; 
+		Object readObj = null; 
 
 		try {
 			// 書き込んだファイルからオブジェクトを読み込み
@@ -77,6 +73,10 @@ public class Serializer {
 		}
 		
 		return readObj;
+	}
+	
+	public static String getFilePath(String filename) {
+		return dirpath + filename + ext;
 	}
 
 }
