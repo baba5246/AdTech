@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="libraries/json-lib-2.4-jdk15-sources.jar"/>
 	<classpathentry kind="lib" path="libraries/json-lib-2.4-jdk15.jar"/>
 	<classpathentry kind="lib" path="libraries/MeCab.jar"/>
+	<classpathentry kind="lib" path="mongo/mongo-2.10.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

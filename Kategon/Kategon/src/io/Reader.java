@@ -1,5 +1,6 @@
 package io;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.util.ArrayList;
@@ -71,6 +72,10 @@ public class Reader {
     	
     	Map<String, Map<String, Object>> result = new HashMap<String, Map<String, Object>>();
 
+    	// パスを絶対パスにする
+    	String cd =  new File(".").getAbsolutePath();
+    	filepath = cd.substring(0, cd.length()-1) + filepath;
+    			
 		// ファイルを読み込む
 		FileReader fr = new FileReader(filepath);
 		BufferedReader br = new BufferedReader(fr);

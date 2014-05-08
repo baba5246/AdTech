@@ -19,7 +19,7 @@ public class Mecab {
 		try {
 			System.loadLibrary("MeCab");
 		} catch (UnsatisfiedLinkError e) {
-			System.err.println("Cannot load the example native code.\nMake sure your DLYD_LIBRARY_PATH contains \'.\'\n" + e);
+			System.err.println("Cannot load the example native code.\nMake sure your DYLD_LIBRARY_PATH contains \'.\'\n" + e);
 			System.exit(1);
 		}
 	}
