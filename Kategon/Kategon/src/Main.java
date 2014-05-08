@@ -5,6 +5,8 @@ import io.BadFileNameException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 
 import dao.MongoDao;
 import preprocessing.Mecab;
@@ -78,7 +80,8 @@ public class Main {
 	private static void mecab(String str) {
 		
 		MongoDao mongo = new MongoDao();
-		mongo.getServerMongo();
+		List<Map<String, Object>> data = mongo.getAppStoreDB();
+		System.out.println(data);
 		
 		Mecab mecab = new Mecab();
 		String[] words = mecab.extractWordsFromDoc(str);
