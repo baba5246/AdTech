@@ -2,9 +2,12 @@ package runner;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import dao.AppDao;
+import entity.App;
 import io.BadFileNameException;
 import io.Reader;
 import io.Serializer;
@@ -23,26 +26,35 @@ public class NBTrain {
 	 */
 	public void train(String csvFilePath, String serFilePath) throws BadFileNameException, IOException {
 		
-		// 教師データのcsv読み込み、nullなら終了。
-		Reader reader = new Reader();
-		List<String[]> csvData = reader.readCSV(csvFilePath);
+		// CSVから説明文取得
+		Map<String, List<String>> allCateDescs = getAllDescsFromCsv(csvFilePath);
 		
-		// カテゴリ情報とjsonパス情報を取得
-		String[] categories = csvData.get(0);
-		String[] jsonPaths = csvData.get(1);
+		// 実行
+		train(allCateDescs, serFilePath);
+	}
+	
+	public void train(int dbType, String serFilePath) throws BadFileNameException, IOException {
 
-		// jsonから説明文取得
-		List<List<String>> allCateDescs = getAllCateDescs(jsonPaths);
+		// DBから説明文取得
+		Map<String, List<String>> allCateDescs = getAllDescsFromDB(dbType);
+		
+		// 実行
+		train(allCateDescs, serFilePath);
+	}
+	
+	private void train(Map<String, List<String>> allCateDescs, String serFilePath) throws BadFileNameException, IOException {
 		
 		// 単語抽出
 		List<List<String[]>> allCateDescWords = new ArrayList<List<String[]>>();
 		Mecab mecab = new Mecab();
-		for (List<String> cateDescs : allCateDescs) {
+		for (String cate : allCateDescs.keySet()) {
+			List<String> cateDescs = allCateDescs.get(cate);
 			List<String[]> cateDescWords = mecab.extractWordsFromDocs(cateDescs);
 			allCateDescWords.add(cateDescWords);
 		}
 		
 		// TFIDF
+		String[] categories = new String[allCateDescs.keySet().size()];
 		double threshold = 0.20;
 		TFIDF tfidf = new TFIDF(threshold);
 		List<String[]> cateWords = tfidf.selectWordsWithTFIDF(allCateDescWords, categories);
@@ -54,7 +66,6 @@ public class NBTrain {
 		
 		// 保存
 		Serializer.wirteObject(nb, serFilePath);
-		
 	}
 	
 
@@ -64,14 +75,22 @@ public class NBTrain {
 	 * @return List<List<String>>型の各カテゴリの説明文リスト
 	 * @throws IOException JSONファイル読み込みに失敗したら投げる例外
 	 */
-	private List<List<String>> getAllCateDescs(String[] paths) throws IOException {
+	private Map<String, List<String>> getAllDescsFromCsv(String csvFilePath) throws IOException {
 		
-		List<List<String>> allCateDescs = new ArrayList<List<String>>();
-		for (int i = 0; i < paths.length; i++) {
+		// 教師データのcsv読み込み、nullなら終了。
+		Reader reader = new Reader();
+		List<String[]> csvData = reader.readCSV(csvFilePath);
+				
+		// カテゴリ情報とjsonパス情報を取得
+		String[] categories = csvData.get(0);
+		String[] jsonPaths = csvData.get(1);
+
+		Map<String, List<String>> allCateDescs = new HashMap<String, List<String>>();
+		for (int i = 0; i < jsonPaths.length; i++) {
 			
 			// jsonデータ取得、nullなら終了。
-			Reader reader = new Reader();
-			Map<String, Map<String, Object>> jsonData = reader.readJSON(paths[i]);
+			reader = new Reader();
+			Map<String, Map<String, Object>> jsonData = reader.readJSON(jsonPaths[i]);
 			
 			// 説明文取得
 			List<String> cateDescs = new ArrayList<String>();
@@ -80,8 +99,37 @@ public class NBTrain {
 				cateDescs.add(desc);
 			}
 			// 保存
-			allCateDescs.add(cateDescs);
+			allCateDescs.put(categories[i], cateDescs);
 		}
 		return allCateDescs;
+	}
+	
+	private Map<String, List<String>> getAllDescsFromDB(int dbType) {
+		
+		AppDao mongo = new AppDao();
+		Map<String, App> data = null;
+		switch (dbType) {
+		case AppDao.APP_STORE_TYPE:
+			data = mongo.getLocalAppStoreApps();
+			break;
+		case AppDao.GOOGLE_PLAY_TYPE:
+			data = mongo.getLocalGooglePlayApps();
+			break;
+		}
+
+		Map<String, List<String>> allCateDescs = new HashMap<String, List<String>>();
+		for (String key: data.keySet()) {
+			
+			App app = data.get(key);
+			String desc = app.getDescription();
+			String cate = app.getCategory();
+			
+			if (allCateDescs.containsKey(cate) == false) allCateDescs.put(key, new ArrayList<String>());
+			List<String> cateDescs = allCateDescs.get(key);
+			cateDescs.add(desc);
+			allCateDescs.put(key, cateDescs);
+		}
+		return allCateDescs;
+		
 	}
 }
