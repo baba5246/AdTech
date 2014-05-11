@@ -5,42 +5,42 @@ import io.BadFileNameException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Map;
 
+import constants.Debug;
 import dao.AppDao;
-import entity.App;
 import preprocessing.Mecab;
 import runner.NBEvaluation;
 import runner.NBTrain;
 
 public class Main {
 
-	private static final String MONGO_APP_STORE = "as";
-	private static final String MONGO_GOOGLE_PLAY = "gp";
-
 	private static final int METHOD_NAIVE_BAYS = 1;
-	private static final int METHOD_MECAB = 2;
-	private static final int METHOD_MONGO = 3;
+	private static final int METHOD_LDA = 2;
+	private static final int METHOD_MECAB = 3;
 	
 	private static final String ARGS_ERROR_MESSAGE = "引数に誤りがあります";
 	
 	public static void main(String[] args) {
 		
-		int method = checkArgs(args);
+		int method = checkMethodArgs(args);
+		Debug.console("実行時の引数は正しい形式です。");
+		
 		switch (method) {
 		case METHOD_NAIVE_BAYS: // ナイーブベイズ
+			Debug.console("ナイーブベイズが選択されました。");
 			nb(args[1]);
 			break;
-		case METHOD_MECAB: // Mecab動作テスト
-			String str = args[1];
-			mecab(str);
+		case METHOD_LDA: 		// LDA
+			Debug.console("LDAトピックモデルが選択されました。（準備中）");
 			break;
-		default:
-			throw new BadArgsException(ARGS_ERROR_MESSAGE);
+		case METHOD_MECAB: 		// Mecab動作テスト
+			Debug.console("Mecab動作テストが選択されました。");
+			mecab(args[1]);
+			break;
 		}
 	}
 	
-	private static int checkArgs(String[] args) {
+	private static int checkMethodArgs(String[] args) {
 
 		if (args.length < 1) {
 			throw new BadArgsException(ARGS_ERROR_MESSAGE);
@@ -48,17 +48,15 @@ public class Main {
 		
 		String methodOption = args[0];
 		switch (methodOption) {
-		case "_nb":
+		case Debug.NB_METHOD:
 			if (args.length != 2) throw new BadArgsException(ARGS_ERROR_MESSAGE);
 			return METHOD_NAIVE_BAYS;
 		case "_mcb":
 			if (args.length != 2) throw new BadArgsException(ARGS_ERROR_MESSAGE);
 			return METHOD_MECAB;
-		case "_mng":
-			if (args.length != 2) throw new BadArgsException(ARGS_ERROR_MESSAGE);
-			return METHOD_MONGO;
+		default:
+			throw new BadArgsException(ARGS_ERROR_MESSAGE);
 		}
-		return -1;
 	}
 
 	private static void nb(String arg) {
@@ -72,14 +70,19 @@ public class Main {
 		NBTrain learner = new NBTrain();
 		try {
 			switch (arg) {
-			case MONGO_APP_STORE:
-				learner.train(1, serFilePath);
+			case Debug.NB_APP_STORE_METHOD:
+				Debug.console("App Store Mode が選択されました。");
+				learner.train(AppDao.APP_STORE_TYPE, serFilePath);
 				break;
-			case MONGO_GOOGLE_PLAY:
-				learner.train(2, serFilePath);
+			case Debug.NB_GOOGLE_PLAY_METHOD:
+				Debug.console("Google Play Mode が選択されました。");
+				learner.train(AppDao.GOOGLE_PLAY_TYPE, serFilePath);
 				break;
 			default:
-				learner.train(arg, serFilePath);
+				if (arg.contains(Debug.NB_CSV_METHOD)) {
+					Debug.console("CSV Mode が選択されました。");
+					learner.train(arg, serFilePath);
+				}
 			}
 		} catch (BadFileNameException | IOException e) {
 			e.printStackTrace();
@@ -90,11 +93,11 @@ public class Main {
 		NBEvaluation eval = new NBEvaluation();
 		try {
 			switch (arg) {
-			case MONGO_APP_STORE:
-				eval.test(arg, serFilePath);
+			case Debug.NB_APP_STORE_METHOD:
+				eval.test(AppDao.APP_STORE_TYPE, serFilePath);
 				break;
-			case MONGO_GOOGLE_PLAY:
-				eval.test(arg, serFilePath);
+			case Debug.NB_GOOGLE_PLAY_METHOD:
+				eval.test(AppDao.GOOGLE_PLAY_TYPE, serFilePath);
 				break;
 			default:
 				eval.test(arg, serFilePath);
@@ -105,7 +108,13 @@ public class Main {
 		}
 	}
 	
+	/**
+	 * MeCabの動作テスト
+	 * @param str 形態素解析したい文字列
+	 */
 	private static void mecab(String str) {
+
+		Debug.console("解析する文字列は " + str + "です。");
 		
 		Mecab mecab = new Mecab();
 		String[] words = mecab.extractWordsFromDoc(str);

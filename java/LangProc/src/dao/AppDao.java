@@ -19,10 +19,8 @@ public class AppDao {
 	private static final int APP_STORE_PORT = 27237;
 	private static final String GOOGLE_PLAY_HOST = "ds053708.mongolab.com";
 	private static final int GOOGLE_PLAY_PORT = 53708;
-	private static final String SERVER_APP_STORE_DB_NAME = "heroku_app24506827";
-	private static final String SERVER_GOOGLE_PLAY_DB_NAME = "heroku_app24368391";
-	private static final String LOCAL_APP_STORE_DB_NAME = "app_store";
-	private static final String LOCAL_GOOGLE_PLAY_DB_NAME = "google_play";
+	private static final String APP_STORE_DB_NAME = "heroku_app24506827";
+	private static final String GOOGLE_PLAY_DB_NAME = "heroku_app24368391";
 	private static final String ACCOUNT_NAME = "baba";
 	private static final String ACCOUNT_PASS = "jun";
 	private static final String COLLECTION_NAME = "apps";
@@ -30,11 +28,11 @@ public class AppDao {
 	private DB db = null;
 	
 	public Map<String, App> getLocalAppStoreApps() {
-		return getLocalDB(LOCAL_APP_STORE_DB_NAME);
+		return getLocalDB(APP_STORE_DB_NAME);
 	}
 	
 	public Map<String, App> getLocalGooglePlayApps() {
-		return getLocalDB(LOCAL_GOOGLE_PLAY_DB_NAME);		
+		return getLocalDB(GOOGLE_PLAY_DB_NAME);		
 	}
 	
 	private Map<String, App> getLocalDB(String dbname) {
@@ -65,11 +63,11 @@ public class AppDao {
 	}
 	
 	public Map<String, App> getAppStoreDB() {
-		return getServerDB(APP_STORE_HOST, APP_STORE_PORT, SERVER_APP_STORE_DB_NAME);
+		return getServerDB(APP_STORE_HOST, APP_STORE_PORT, APP_STORE_DB_NAME);
 	}
 	
 	public Map<String, App> getGooglePlayDB() {
-		return getServerDB(GOOGLE_PLAY_HOST, GOOGLE_PLAY_PORT, SERVER_GOOGLE_PLAY_DB_NAME);
+		return getServerDB(GOOGLE_PLAY_HOST, GOOGLE_PLAY_PORT, GOOGLE_PLAY_DB_NAME);
 	}
 	
 	private Map<String, App> getServerDB(String hostname, int port, String dbname) {

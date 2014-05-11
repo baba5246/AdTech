@@ -28,7 +28,7 @@ public class TFIDF {
 	 * @param categories カテゴリ配列 (必ず allCateDescWords.size() == categories.size() であること)
 	 * @return カテゴリごとの単語配列
 	 */
-	public List<String[]> selectWordsWithTFIDF(List<List<String[]>> allCateDescWords, String[] categories) {
+	public List<String[]> selectWordsWithTFIDF(Map<String, List<String[]>> allCateDescWords) {
 		
 		// カテゴリごとの単語配列
 		List<String[]> cateWords = new ArrayList<String[]>();
@@ -40,17 +40,16 @@ public class TFIDF {
 		Map<String, Integer> df = computeDF(allCateDescWords);
 		
 		// TFの計算としきい値処理
-		for (int i = 0; i < allCateDescWords.size(); i++) {
-			
+		for (String cate : allCateDescWords.keySet()) {
 			List<String> filteredWords = new ArrayList<String>();
-			for (String[] desc : allCateDescWords.get(i)) {
+			for (String[] desc : allCateDescWords.get(cate)) {
 				Map<String, Integer> tf = computeTF(desc);
 				for (String w : desc) {
 					double tfidf = (double)tf.get(w) / tf.keySet().size() * Math.log(N/(double)df.get(w));
 					if (tfidf > threshold) filteredWords.add(w);
 				}
 			}
-			filteredWords.add(0, categories[i]);
+			filteredWords.add(0, cate);
 			
 			String[] words = new String[filteredWords.size()];
 			filteredWords.toArray(words);
@@ -66,9 +65,9 @@ public class TFIDF {
 	 * @param allCateDescWords 全説明文の単語リスト
 	 * @return 総数
 	 */
-	private double countAllDescs(List<List<String[]>> allCateDescWords) {
+	private double countAllDescs(Map<String, List<String[]>> allCateDescWords) {
 		double N = 0;
-		for (List<String[]> cateDescs : allCateDescWords) {
+		for (List<String[]> cateDescs : allCateDescWords.values()) {
 			N += cateDescs.size();
 		}
 		return N;
@@ -79,11 +78,11 @@ public class TFIDF {
 	 * @param allCateDescsWords 全説明文の単語リスト
 	 * @return 単語ごとのカウント
 	 */
-	private Map<String, Integer> computeDF(List<List<String[]>> allCateDescsWords) {
+	private Map<String, Integer> computeDF(Map<String, List<String[]>> allCateDescsWords) {
 
 		// DFの計算
 		Map<String, Integer> df = new HashMap<String, Integer>();
-		for (List<String[]> cateDescs : allCateDescsWords) {
+		for (List<String[]> cateDescs : allCateDescsWords.values()) {
 			for (String[] desc : cateDescs) {
 				List<String> dfContains = new ArrayList<String>();
 				for (String w : desc) {

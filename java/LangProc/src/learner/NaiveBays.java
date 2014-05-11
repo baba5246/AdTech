@@ -108,8 +108,7 @@ public class NaiveBays implements Serializable {
 	@Override
 	public String toString() {
 		int total = sum(catecount.values());
-		return "vocabularies:" + vocabularies + "\ndocuments:" + total + 
-				", vocabularies:" + vocabularies.size() + ", categories:" + categories.size();
+		return "documents:" + total + ", vocabularies:" + vocabularies.size() + ", categories:" + categories.size();
 	}
 	
 	/**
