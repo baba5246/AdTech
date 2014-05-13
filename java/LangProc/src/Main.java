@@ -1,5 +1,4 @@
 
-
 import io.BadFileNameException;
 
 import java.io.IOException;
@@ -9,37 +8,52 @@ import java.util.Calendar;
 import constants.Debug;
 import dao.AppDao;
 import preprocessing.Mecab;
-import runner.NBEvaluation;
-import runner.NBTrain;
+import runner.LDARunner;
+import runner.NBRunner;
 
+
+/**
+ * 
+ */
 public class Main {
-
-	private static final int METHOD_NAIVE_BAYS = 1;
-	private static final int METHOD_LDA = 2;
-	private static final int METHOD_MECAB = 3;
 	
 	private static final String ARGS_ERROR_MESSAGE = "引数に誤りがあります";
 	
+	/**
+	 * 全ての始まり
+	 * 引数をチェックして、選択されたメソッドを実行する
+	 * @param args 実行時引数
+	 */
 	public static void main(String[] args) {
 		
+		// 引数チェック
 		int method = checkMethodArgs(args);
 		Debug.console("実行時の引数は正しい形式です。");
 		
+		// メソッドを選択
 		switch (method) {
-		case METHOD_NAIVE_BAYS: // ナイーブベイズ
+		case Debug.METHOD_NAIVE_BAYS: // ナイーブベイズ
 			Debug.console("ナイーブベイズが選択されました。");
 			nb(args[1]);
 			break;
-		case METHOD_LDA: 		// LDA
+		case Debug.METHOD_LDA: 		// LDA
 			Debug.console("LDAトピックモデルが選択されました。（準備中）");
+			lda(args[1], Integer.parseInt(args[2]));
 			break;
-		case METHOD_MECAB: 		// Mecab動作テスト
+		case Debug.METHOD_MECAB: 		// Mecab動作テスト
 			Debug.console("Mecab動作テストが選択されました。");
 			mecab(args[1]);
 			break;
 		}
 	}
 	
+	/**
+	 * 引数をチェックする
+	 * 正しければ、選択されたメソッドのid番号を返す
+	 * 誤りであれば、例外を投げて終了 TODO: ここUsageを表示するようにしよう
+	 * @param args 実行時引数
+	 * @return 選択されたメソッドのid番号
+	 */
 	private static int checkMethodArgs(String[] args) {
 
 		if (args.length < 1) {
@@ -50,15 +64,26 @@ public class Main {
 		switch (methodOption) {
 		case Debug.NB_METHOD:
 			if (args.length != 2) throw new BadArgsException(ARGS_ERROR_MESSAGE);
-			return METHOD_NAIVE_BAYS;
+			return Debug.METHOD_NAIVE_BAYS;
+		case Debug.LDA_METHOD:
+			if (args.length != 3 && args[2].matches("^[0-9].[0-9]+$")) throw new BadArgsException(ARGS_ERROR_MESSAGE);
+			return Debug.METHOD_LDA;
 		case "_mcb":
 			if (args.length != 2) throw new BadArgsException(ARGS_ERROR_MESSAGE);
-			return METHOD_MECAB;
+			return Debug.METHOD_MECAB;
 		default:
 			throw new BadArgsException(ARGS_ERROR_MESSAGE);
 		}
 	}
 
+	
+	/******** Methods to Run the Selected Algorithm ************/
+	
+	/**
+	 * ナイーブベイズを実行する
+	 * カテゴリと説明文の情報からナイーブベイズ分類器の学習を行い、同じデータで分類器を評価する
+	 * @param arg 引数（ as: AppStoreのDBを指定 gp:GooglePlayのDBを指定 csvのパス:csvのファイルを指定 ）
+	 */
 	private static void nb(String arg) {
 
 		// 保存するファイル名を作成
@@ -67,21 +92,21 @@ public class Main {
         String serFilePath = "nb" + "_" + sdf.format(cal.getTime());
 		
         // 学習
-		NBTrain learner = new NBTrain();
+		NBRunner runner = new NBRunner();
 		try {
 			switch (arg) {
-			case Debug.NB_APP_STORE_METHOD:
+			case Debug.APP_STORE_OPTION:
 				Debug.console("App Store Mode が選択されました。");
-				learner.train(AppDao.APP_STORE_TYPE, serFilePath);
+				runner.train(AppDao.APP_STORE_TYPE, serFilePath);
 				break;
-			case Debug.NB_GOOGLE_PLAY_METHOD:
+			case Debug.GOOGLE_PLAY_OPTION:
 				Debug.console("Google Play Mode が選択されました。");
-				learner.train(AppDao.GOOGLE_PLAY_TYPE, serFilePath);
+				runner.train(AppDao.GOOGLE_PLAY_TYPE, serFilePath);
 				break;
 			default:
-				if (arg.contains(Debug.NB_CSV_METHOD)) {
+				if (arg.contains(Debug.CSV_OPTION)) {
 					Debug.console("CSV Mode が選択されました。");
-					learner.train(arg, serFilePath);
+					runner.train(arg, serFilePath);
 				}
 			}
 		} catch (BadFileNameException | IOException e) {
@@ -90,21 +115,38 @@ public class Main {
 		}
 		
 		// 評価
-		NBEvaluation eval = new NBEvaluation();
 		try {
 			switch (arg) {
-			case Debug.NB_APP_STORE_METHOD:
-				eval.test(AppDao.APP_STORE_TYPE, serFilePath);
+			case Debug.APP_STORE_OPTION:
+				runner.test(AppDao.APP_STORE_TYPE, serFilePath);
 				break;
-			case Debug.NB_GOOGLE_PLAY_METHOD:
-				eval.test(AppDao.GOOGLE_PLAY_TYPE, serFilePath);
+			case Debug.GOOGLE_PLAY_OPTION:
+				runner.test(AppDao.GOOGLE_PLAY_TYPE, serFilePath);
 				break;
 			default:
-				eval.test(arg, serFilePath);
+				runner.test(arg, serFilePath);
 			}
 		} catch (BadFileNameException | ClassNotFoundException | IOException e) {
 			e.printStackTrace();
 			return;
+		}
+	}
+	
+	/**
+	 * LDAを実行する
+	 * 指定されたDBからアプリの説明文を取得し、指定されたトピック数にクラスタリングする
+	 * @param arg 
+	 */
+	private static void lda(String arg, int topicNum) {
+		
+		LDARunner runner = new LDARunner();
+		switch (arg) {
+		case Debug.APP_STORE_OPTION:
+			runner.runLDA(AppDao.APP_STORE_TYPE, topicNum);
+			break;
+		case Debug.GOOGLE_PLAY_OPTION:
+			runner.runLDA(AppDao.GOOGLE_PLAY_TYPE, topicNum);
+			break;
 		}
 	}
 	

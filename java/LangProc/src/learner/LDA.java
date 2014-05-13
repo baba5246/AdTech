@@ -1,44 +1,47 @@
 package learner;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class LDA implements Serializable {
 
-	private int D; // number of document
+	// LDA variables
+//	private long D; // number of document
 	private int K; // number of topic
-	private int W; // number of unique word
-	private int[][] wordCount;
+	private long W; // number of unique word
 	private Map<String, int[]> wordCnt;
-	private int[][] docCount;
 	private Map<String, int[]> docCnt;
 	private int[] topicCount;
+	
 	// hyper parameter
 	private double alpha, beta;
 	private Token[] tokens;
 	private double[] P;
+	
 	// topic assignment
 	private int[] z;
 
 	/** SerializableのID */
 	private static final long serialVersionUID = 1L;
 
-	public LDA(int documentNum, int topicNum, int wordNum, List<Token> tlist) {
+	public LDA(long documentNum, int topicNum, long wordNum, List<Token> tlist) {
 		this(documentNum, topicNum, wordNum, tlist, 50.0 / topicNum, 0.1);
 	}
 	
-	public LDA(int documentNum, int topicNum, int wordNum, List<Token> tlist, double alpha, double beta) {
-//		wordCount = new int[wordNum][topicNum];
+	public LDA(long documentNum, int topicNum, long wordNum, List<Token> tlist, double alpha, double beta) {
+
 		wordCnt = new HashMap<String, int[]>();
-//		docCount = new int[documentNum][topicNum];
 		docCnt = new HashMap<String, int[]>();
 		topicCount = new int[topicNum];
-		D = documentNum;
+//		D = documentNum;
 		K = topicNum;
 		W = wordNum;
-		tokens = tlist.toArray(new Token[0]);
+		tokens = new Token[tlist.size()];
+		tlist.toArray(tokens);
 		z = new int[tokens.length];
 		this.alpha = alpha;
 		this.beta = beta;
@@ -49,17 +52,19 @@ public class LDA implements Serializable {
 	private void init() {
 		for (int i = 0; i < z.length; ++i) {
 			Token t = tokens[i];
+			String docId = t.getDocId();
+			String wordId = t.getWordId();
 			int assign = (int)(Math.random() % K);
 			
-//			wordCount[t.getWordId()][assign]++;
+			if (wordCnt.containsKey(wordId) == false) {
+				wordCnt.put(wordId, new int[K]);
+			}
+			wordCnt.get(wordId)[assign]++;
 			
-			if (wordCnt.containsKey(t.getWordIdString()) == false) wordCnt.put(t.getWordIdString(), new int[K]);
-			wordCnt.get(String.valueOf(t.getWordId()))[assign]++;
-			
-//			docCount[t.getDocId()][assign]++;
-			
-			if (docCnt.containsKey(t.getDocIdString()) == false) docCnt.put(t.getDocIdString(), new int[K]);
-			docCnt.get(String.valueOf(t.getDocId()))[assign]++;
+			if (docCnt.containsKey(docId) == false) {
+				docCnt.put(docId, new int[K]);
+			}
+			docCnt.get(docId)[assign]++;
 			
 			topicCount[assign]++;
 			z[i] = assign;
@@ -68,11 +73,8 @@ public class LDA implements Serializable {
 	
 	private int selectNextTopic(Token t) {
 		for (int k = 0; k < P.length; ++k) {
-//			P[k] = (wordCount[t.getWordId()][k] + beta)
-//					* (docCount[t.getDocId()][k] + alpha)
-//					/ (topicCount[k] + W * beta);
-			P[k] = (wordCnt.get(t.getWordIdString())[k] + beta)
-					* (docCnt.get(t.getDocIdString())[k] + alpha)
+			P[k] = (wordCnt.get(t.getWordId())[k] + beta)
+					* (docCnt.get(t.getDocId())[k] + alpha)
 					/ (topicCount[k] + W * beta);
 			if (k != 0) {
 				P[k] += P[k - 1];
@@ -91,85 +93,107 @@ public class LDA implements Serializable {
 		Token t = tokens[tokenId];
 		int assign = z[tokenId];
 		// remove from current topic
-//		wordCount[t.getWordId()][assign]--;
-		wordCnt.get(t.getWordIdString())[assign]--;
-//		docCount[t.getDocId()][assign]--;
-		docCnt.get(t.getDocIdString())[assign]--;
+		wordCnt.get(t.getWordId())[assign]--;
+		docCnt.get(t.getDocId())[assign]--;
 		topicCount[assign]--;
+		// select a next topic
 		assign = selectNextTopic(t);
-//		wordCount[t.getWordId()][assign]++;
-		wordCnt.get(t.getWordIdString())[assign]++;
-//		docCount[t.getDocId()][assign]++;
-		docCnt.get(t.getDocIdString())[assign]++;
+		wordCnt.get(t.getWordId())[assign]++;
+		docCnt.get(t.getDocId())[assign]++;
 		topicCount[assign]++;
 		z[tokenId] = assign;
 	}
 	
-	public void update() {
-		for (int i = 0; i < z.length; ++i) {
-			resample(i);
+	public void update(int maxCount) {
+		for (int c = 0; c < maxCount; ++c) {
+			for (int i = 0; i < z.length; ++i) {
+				resample(i);
+			}
 		}
 	}
 	
-	public double[][] getTheta() {
-		double theta[][] = new double[D][K];
+	public Map<String, double[]> getTheta() {
 		Map<String, double[]> Theta = new HashMap<String, double[]>();
-//		for (int i = 0; i < D; ++i) {
-		for (String key : Theta.keySet()) {
+		for (String key : docCnt.keySet()) {
+			Theta.put(key, new double[K]);
 			double sum = 0.0;
 			for (int j = 0; j < K; ++j) {
-//				theta[i][j] = alpha + docCount[i][j];
 				Theta.get(key)[j] = alpha + docCnt.get(key)[j];
 				sum += Theta.get(key)[j];
 			}
 			// normalize
 			double sinv = 1.0 / sum;
 			for (int j = 0; j < K; ++j) {
-//				theta[i][j] *= sinv;
 				Theta.get(key)[j] *= sinv;
 			}
 		}
-		return theta;
+		return Theta;
 	}
 
-	public double[][] getPhi() {
-		double phi[][] = new double[K][W];
-		Map<String, double[]> Phi = new HashMap<String, double[]>();
-//		for (int i = 0; i < K; ++i) {
-		for (String key : Phi.keySet()) {
+	public List<Map<String, Double>> getPhi() {
+		List<Map<String, Double>> Phi = new ArrayList<Map<String, Double>>();
+		for (int i = 0; i < K; ++i) {
+			Map<String, Double> wordProbs = new HashMap<String, Double>();
 			double sum = 0.0;
-			for (int j = 0; j < W; ++j) {
-//				phi[i][j] = beta + wordCount[j][i];
-				Phi.get(key)[j] = beta + wordCnt.get(key)[j];
-				sum += Phi.get(key)[j];
+			for (String key : wordCnt.keySet()) {
+				wordProbs.put(key, beta + wordCnt.get(key)[i]);
+				sum += wordProbs.get(key);
 			}
+			
 			// normalize
 			double sinv = 1.0 / sum;
-			for (int j = 0; j < W; ++j) {
-//				phi[i][j] *= sinv;
-				Phi.get(key)[j] *= sinv;
+			for (String key : wordProbs.keySet()) {
+				wordProbs.put(key, wordProbs.get(key)*sinv);
 			}
+			Phi.add(wordProbs);
 		}
-		return phi;
+		return Phi;
 	}
 		
+	public String getTopicWords() {
+		
+		StringBuilder b = new StringBuilder();
+		
+		// 各トピックごとの単語出現確率を取得
+		List<Map<String, Double>> Phi = getPhi();
+		
+		for (int k = 0; k < Phi.size(); k++) {
+			b.append("*********  Topic " + k + " ************\n");
+			Map<String, Double> phis = Phi.get(k);
+			List<WordComp> wcs = new ArrayList<WordComp>();
+			for (String w : phis.keySet()) {
+				WordComp wc = new WordComp(w, phis.get(w));
+				wcs.add(wc);
+			}
+			Collections.sort(wcs);
+			for (int i = 0; i < 10; ++i) {
+				// output related word
+				WordComp wc = wcs.get(wcs.size() - 1 - i);
+				b.append(wc.getId() + ": " + wc.getProb() + "\n");
+			}
+		}
+		
+		return new String(b);
+	}
 }
 
-class Token {
-	private int docId;
-	private int wordId;
+class WordComp implements Comparable<WordComp> {
+	
+	private String id;
+	private Double prob;
+	
+	public WordComp(String id, Double prob) {
+		this.id = id;
+		this.prob = prob;
+	}
+	
+	public String getId() { return id; }
+	public Double getProb() { return prob; }
 
-	public Token(int d, int w) {
-		setDocId(d);
-		setWordId(w);
+	@Override
+	public int compareTo(WordComp other) {
+		return Double.compare(prob, other.prob);
 	}
 
-	public int getDocId() {	return docId; }
-	public String getDocIdString() { return String.valueOf(docId); }
-	public void setDocId(int docId) { this.docId = docId; }
 
-	public int getWordId() { return wordId; }
-	public String getWordIdString() { return String.valueOf(wordId); }
-	public void setWordId(int wordId) {	this.wordId = wordId; }
-	
 }

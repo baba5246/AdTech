@@ -1,12 +1,7 @@
 package runner;
 
-import io.BadFileNameException;
-import io.Reader;
-import io.Serializer;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,11 +9,77 @@ import java.util.Map;
 import constants.Debug;
 import dao.AppDao;
 import entity.App;
-import learner.NaiveBays;
+import io.BadFileNameException;
+import io.Reader;
+import io.Serializer;
 import preprocessing.Mecab;
 import preprocessing.TFIDF;
+import learner.NaiveBays;
 
-public class NBEvaluation {
+public class NBRunner {
+	
+	/**
+	 * 特徴語抽出で用いるtf-idfの閾値
+	 */
+	public static final double threshold = 0.20;
+	
+	/********************* Train Methods ****************************/
+	
+	/**
+	 * 分類器の学習を行って、分類器を保存する
+	 * @param csvFilePath カテゴリ情報とJSONファイルパスが記載されたCSVファイルのパス
+	 * @param serFilePath 学習結果を保存するSERファイルのパス
+	 * @throws BadFileNameException 指定したSERファイル名が正しくない場合に例外を投げる
+	 * @throws IOException IOException 各種ファイルの読み込みに失敗したら例外を投げる
+	 */
+	public void train(String csvFilePath, String serFilePath) throws BadFileNameException, IOException {
+		
+		// CSVから説明文取得
+		Map<String, List<String>> allCateDescs = getAllDescsFromCsv(csvFilePath);
+		
+		// 実行
+		train(allCateDescs, serFilePath);
+	}
+	
+	/**
+	 * 分類器の学習を行って、分類器を保存する
+	 * @param dbType 使用するDBを指定する（1: App Store, 2: Google Play）
+	 * @param serFilePath 学習結果を保存するSERファイルのパス
+	 * @throws BadFileNameException 指定したSERファイル名が正しくない場合に例外を投げる
+	 * @throws IOException 各種ファイルの読み込みに失敗したら例外を投げる
+	 */
+	public void train(int dbType, String serFilePath) throws BadFileNameException, IOException {
+
+		// DBから説明文取得
+		Map<String, List<String>> allCateDescs = getAllDescsFromDB(dbType);
+		
+		// 実行
+		train(allCateDescs, serFilePath);
+	}
+	
+	/**
+	 * 分類器の学習を行って、分類器を保存する
+	 * @param allCateDescs 全カテゴリの全説明文
+	 * @param serFilePath 学習結果を保存するSERファイルのパス
+	 * @throws BadFileNameException 指定したSERファイル名が正しくない場合に例外を投げる
+	 * @throws IOException 各種ファイルの読み込みに失敗したら例外を投げる
+	 */
+	private void train(Map<String, List<String>> allCateDescs, String serFilePath) throws BadFileNameException, IOException {
+
+		// 単語抽出
+		Map<String, List<String[]>> allCateDescWords = getAllCateWords(allCateDescs);
+		
+		// TFIDF
+		List<String[]> cateWords = extractFeatureWordsWithTFIDF(allCateDescWords, threshold);
+		
+		// Naive Bays
+		NaiveBays nb = runNaiveBays(cateWords);
+		
+		// 保存
+		saveNaiveBays(nb, serFilePath);
+	}
+
+	/********************* Test Methods ****************************/
 	
 	/**
 	 * 学習した分類器を評価する
@@ -68,13 +129,14 @@ public class NBEvaluation {
 		Map<String, List<String[]>> allCateDescWords = getAllCateWords(allCateDescs);
 
 		// 分類器の学習結果を読み込み
-		NaiveBays nb = savedNaiveBays(serFilePath);
+		NaiveBays nb = readSavedNaiveBays(serFilePath);
 
 		// 評価を算出し、標準出力に吐き出す
 		evaluate(allCateDescWords, nb);
 	}
 	
-	
+	/********************* Assistant Methods ****************************/
+
 	/**
 	 * JSONのファイルバス配列から全説明文を取得してくる
 	 * @param paths JSONのファイルバス配列
@@ -191,7 +253,71 @@ public class NBEvaluation {
 		return allCateDescWords;
 	}
 
-	private NaiveBays savedNaiveBays(String serFilePath) throws BadFileNameException, ClassNotFoundException, IOException {
+	/**
+	 * tf-idfで共通語を削除して特徴語を抽出する
+	 * @param allCateDescWords 全カテゴリの全単語
+	 * @param threshold 閾値
+	 * @return 各カテゴリの特徴語配列
+	 */
+	private List<String[]> extractFeatureWordsWithTFIDF(Map<String, List<String[]>> allCateDescWords, double threshold) {
+
+		Debug.console("tf-idfで単語を削減します。");
+		
+		TFIDF tfidf = new TFIDF(threshold);
+		List<String[]> cateWords = tfidf.selectWordsWithCategory(allCateDescWords);
+
+		StringBuilder b = new StringBuilder("tf-idf単語削減が完了しました（");
+		for (int ci = 0; ci < cateWords.size(); ci++) {
+			b.append(cateWords.get(ci)[0] + ":" + cateWords.get(ci).length + "語  ");
+		}
+		b.append("）");
+		Debug.console(b);
+		
+		return cateWords;
+	}
+	
+	/**
+	 * ナイーブベイズで分類器を学習する
+	 * @param cateWords 各カテゴリの単語配列
+	 * @return ナイーブベイズ分類器
+	 */
+	private NaiveBays runNaiveBays(List<String[]> cateWords) {
+
+		Debug.console("ナイーブベイズの学習を開始します。");
+		
+		NaiveBays nb = new NaiveBays();
+		nb.train(cateWords);
+		
+		Debug.console("ナイーブベイズの学習が完了しました（ " + nb.toString() + " ）");
+		
+		return nb;
+	}
+
+	/**
+	 * ナイーブベイズの分類器を保存する
+	 * @param nb ナイーブベイズ分類器
+	 * @param serFilePath 保存先のSERファイルのパス
+	 * @throws BadFileNameException 指定したSERファイル名が正しくない場合に投げる例外
+	 * @throws IOException 各種ファイルの読み込みに失敗したら投げる例外
+	 */
+	private void saveNaiveBays(NaiveBays nb, String serFilePath) throws BadFileNameException, IOException {
+		
+		Debug.console("結果の保存を開始します。");
+		
+		Serializer.wirteObject(nb, serFilePath);
+		
+		Debug.console("結果の保存が完了しました（ 保存先:" + Serializer.getFilePath(serFilePath) + " ）");
+	}
+
+	/**
+	 * 保存されたナイーブベイズ分類器を取得する
+	 * @param serFilePath 分類器を保存したSERファイルのパス
+	 * @return ナイーブベイズ分類器
+	 * @throws BadFileNameException 指定したSERファイル名が正しくない場合に投げる例外
+	 * @throws ClassNotFoundException クラスが見つからないときに投げる例外
+	 * @throws IOException 各種ファイルの読み込みに失敗したら投げる例外
+	 */ 
+	private NaiveBays readSavedNaiveBays(String serFilePath) throws BadFileNameException, ClassNotFoundException, IOException {
 
 		Debug.console("分類器の読み込みを開始します（" + Serializer.getFilePath(serFilePath) + "）");
 		

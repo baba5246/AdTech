@@ -3,13 +3,14 @@ package learner;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 class PComp implements Comparable<PComp> {
 	
-	int id;
+	String id;
 	double prob;
 
 	@Override
@@ -17,6 +18,10 @@ class PComp implements Comparable<PComp> {
 		return Double.compare(prob, o.prob);
 	}
 }
+
+/****************************
+ *  いまちゃんと動きません！   *
+ ****************************/
 
 public class NIPS {
 	
@@ -33,7 +38,7 @@ public class NIPS {
 			int wid = sc.nextInt() - 1;
 			int count = sc.nextInt();
 			for (int c = 0; c < count; ++c) {
-				tlist.add(new Token(did, wid));
+				tlist.add(new Token(String.valueOf(did), String.valueOf(wid)));
 			}
 		}
 		
@@ -45,12 +50,12 @@ public class NIPS {
 		
 		int K = 50;
 		LDA lda = new LDA(D, K, W, tlist);
-		for (int i = 0; i <= 200; ++i) {
-			lda.update();
+		for (int i = 0; i <= 20; ++i) {
+			lda.update(1);
 			if (i % 10 == 0) {
 				PrintWriter out = new PrintWriter("output/wordtopic" + i
 						+ ".txt");
-				double phi[][] = lda.getPhi();
+				List<Map<String, Double>> phi = lda.getPhi();
 				outputWordTopicProb(phi, words, out);
 				out.close();
 			}
@@ -58,24 +63,23 @@ public class NIPS {
 		sc.close();
 	}
 
-	private static void outputWordTopicProb(double phi[][], String[] words,	PrintWriter out) {
+	private static void outputWordTopicProb(List<Map<String, Double>> phi, String[] words,	PrintWriter out) {
 		
-		int K = phi.length;
-		int W = phi[0].length;
+		int K = phi.size();
 		for (int k = 0; k < K; ++k) {
 			out.println("topic : " + k);
-			PComp ps[] = new PComp[W];
-			for (int w = 0; w < W; ++w) {
+			List<PComp> ps = new ArrayList<PComp>();
+			for (String key : phi.get(k).keySet()) {
 				PComp pc = new PComp();
-				pc.id = w;
-				pc.prob = phi[k][w];
-				ps[w] = pc;
+				pc.id = key;
+				pc.prob = phi.get(k).get(key);
+				ps.add(pc);
 			}
-			Arrays.sort(ps);
+			Collections.sort(ps);
 			for (int i = 0; i < 10; ++i) {
 				// output related word
-				PComp p = ps[W - 1 - i];
-				out.println(words[p.id] + " " + p.prob);
+				PComp p = ps.get(ps.size() - 1 - i);
+				out.println(p.id + " " + p.prob);
 			}
 		}
 	}

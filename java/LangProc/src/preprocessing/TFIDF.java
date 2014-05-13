@@ -28,7 +28,7 @@ public class TFIDF {
 	 * @param categories カテゴリ配列 (必ず allCateDescWords.size() == categories.size() であること)
 	 * @return カテゴリごとの単語配列
 	 */
-	public List<String[]> selectWordsWithTFIDF(Map<String, List<String[]>> allCateDescWords) {
+	public List<String[]> selectWordsWithCategory(Map<String, List<String[]>> allCateDescWords) {
 		
 		// カテゴリごとの単語配列
 		List<String[]> cateWords = new ArrayList<String[]>();
