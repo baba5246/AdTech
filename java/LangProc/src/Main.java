@@ -37,7 +37,7 @@ public class Main {
 			nb(args[1]);
 			break;
 		case Debug.METHOD_LDA: 		// LDA
-			Debug.console("LDAトピックモデルが選択されました。（準備中）");
+			Debug.console("LDAトピックモデルが選択されました。");
 			lda(args[1], Integer.parseInt(args[2]));
 			break;
 		case Debug.METHOD_MECAB: 		// Mecab動作テスト
